@@ -8,7 +8,7 @@ const ProductMoto: React.FC = () => {
         Anvi - Promise you the best quality meat
       </h2>
 
-      <div className="flex flex-col sm:flex-row justify-center items-center gap-6 text-gray-700">
+      <div className="flex justify-center items-center gap-6 text-gray-700 text-nowrap flex-wrap">
         <MotoPoint text="Fresh & Juicy cuts" />
         <MotoPoint text="We maintain hygiene" />
         <MotoPoint text="Delivery to your doorstep" />
