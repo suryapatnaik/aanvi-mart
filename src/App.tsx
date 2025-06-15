@@ -1,7 +1,7 @@
 import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { lazy, Suspense } from "react";
-import Header from "./components/Header/Header";
+import Header from "./Components/Header/Header";
 import { ROUTES } from "./routes/constants";
 
 const Home = lazy(() => import("./pages/Home"));
