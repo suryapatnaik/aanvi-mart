@@ -1,8 +1,8 @@
 import React from "react";
-import BannerSection from "../components/BannerSection/BannerSection";
-import ProductMoto from "../components/ProductMoto/ProductMoto";
-import Categories from "../components/categories/Categories";
-import HomeProductsList from "../components/HomeProductsList/HomeProductsList";
+import BannerSection from "../Components/BannerSection/BannerSection";
+import ProductMoto from "../Components/ProductMoto/ProductMoto";
+import Categories from "../Components/categories/Categories";
+import HomeProductsList from "../Components/HomeProductsList/HomeProductsList";
 import { bestSellerData } from "../utils/mockData";
 
 const Home: React.FC = () => {

@@ -1,6 +1,7 @@
 import React from "react";
 import { categories } from "../../utils/categories/categories.helpers";
-import SectionTitle from "../SectionTitle";
+import SectionTitle from "../../Components/SectionTitle";
+
 
 const Categories: React.FC = () => {
   return (
