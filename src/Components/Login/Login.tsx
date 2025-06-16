@@ -78,11 +78,11 @@ const LoginModal: React.FC<LoginModalProps> = ({
 
   // Handle input changes
   const handleInputChange = (field: keyof FormData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    // Clear error when user starts typing
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: '' }));
+    if (field === 'mobileNumber' && !/^\d*$/.test(value)) {
+      return; // Only allow numeric input
     }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    setErrors((prev) => ({ ...prev, [field]: '' }));
   };
 
   // Send OTP
@@ -245,6 +245,8 @@ const LoginModal: React.FC<LoginModalProps> = ({
                 }`}
                 placeholder="Enter 10-digit mobile number"
                 maxLength={10}
+                pattern="[0-9]*"
+                inputMode="numeric"
                 disabled={step === 'otp'}
               />
               {errors.mobileNumber && (
