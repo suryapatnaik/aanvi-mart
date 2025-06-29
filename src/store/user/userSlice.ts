@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { useSelector, useDispatch } from "react-redux";
 import { useCallback } from "react";
 import { RootState } from "../index";
+import { clearCart } from "../cartSlice";
 
 // Define UserData type to match Login component
 interface UserData {
@@ -185,6 +186,7 @@ export const useUser = () => {
   const logout = useCallback(() => {
     try {
       dispatch(logoutUser());
+      dispatch(clearCart());
     } catch (err) {
       console.error('Error during logout dispatch:', err);
     }
