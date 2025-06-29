@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../store/user/userSlice";
 import brandLogo from "../../assets/Brand/anvi-logo.png";
@@ -9,6 +9,8 @@ import { fetchLocationDetails } from "../../utils/common/common.helpers";
 import CartModal from "../CartSection/CartModal";
 import MyAccountModal from "./MyAccountModal";
 import { ROUTES } from "../../routes/constants";
+import { searchProducts } from "../../utils/mockData";
+import SearchResults from "../SearchResults";
 
 // Add a locationzzzzlace with your SVG if needed)
 const locationIcon = (
@@ -46,6 +48,8 @@ const Header: React.FC<HeaderProps> = ({ className = '', onCategoriesClick = () 
   const [isCartModalOpen, setIsCartModalOpen] = useState(false);
   const [isMyAccountModalOpen, setIsMyAccountModalOpen] = useState(false);
   const [modalPosition, setModalPosition] = useState<{ x: number; y: number } | undefined>();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showSearchResults, setShowSearchResults] = useState(false);
 
   // Initialize user from localStorage on component mount
   useEffect(() => {
@@ -123,6 +127,21 @@ const Header: React.FC<HeaderProps> = ({ className = '', onCategoriesClick = () 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const searchResults = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    return searchProducts(searchQuery);
+  }, [searchQuery]);
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    setShowSearchResults(true);
+  };
+
+  const handleCloseSearchResults = () => {
+    setShowSearchResults(false);
+    setSearchQuery("");
+  };
+
   return (
     <>
       <div className={`bg-[#920000] fixed top-0 left-0 right-0 z-50 ${className}`}>
@@ -154,6 +173,18 @@ const Header: React.FC<HeaderProps> = ({ className = '', onCategoriesClick = () 
               placeholder="Search for Chicken, Mutton and More.."
               height="50px"
               width="100%"
+              value={searchQuery}
+              onSearch={handleSearch}
+              showSearchResults={showSearchResults}
+              searchResults={
+                showSearchResults && searchResults.length > 0 ? (
+                  <SearchResults
+                    products={searchResults}
+                    searchQuery={searchQuery}
+                    onClose={handleCloseSearchResults}
+                  />
+                ) : undefined
+              }
             />
           </div>
 
@@ -224,6 +255,18 @@ const Header: React.FC<HeaderProps> = ({ className = '', onCategoriesClick = () 
               placeholder="Search for Chicken, Mutton and More.."
               height="45px"
               width="100%"
+              value={searchQuery}
+              onSearch={handleSearch}
+              showSearchResults={showSearchResults}
+              searchResults={
+                showSearchResults && searchResults.length > 0 ? (
+                  <SearchResults
+                    products={searchResults}
+                    searchQuery={searchQuery}
+                    onClose={handleCloseSearchResults}
+                  />
+                ) : undefined
+              }
             />
           </div>
 
@@ -268,6 +311,18 @@ const Header: React.FC<HeaderProps> = ({ className = '', onCategoriesClick = () 
                 placeholder="Search for Chicken, Mutton and More.."
                 height="40px"
                 width="100%"
+                value={searchQuery}
+                onSearch={handleSearch}
+                showSearchResults={showSearchResults}
+                searchResults={
+                  showSearchResults && searchResults.length > 0 ? (
+                    <SearchResults
+                      products={searchResults}
+                      searchQuery={searchQuery}
+                      onClose={handleCloseSearchResults}
+                    />
+                  ) : undefined
+                }
               />
             </div>
           </div>
