@@ -3,12 +3,12 @@ import CheckedIcon from '../../assets/icons/CheckedIcon.svg'
 
 const ProductMoto: React.FC = () => {
   return (
-    <div className="bg-white text-center py-10 px-4 sm:px-8 lg:px-16">
+    <div className="bg-white text-center py-5 px-4 sm:px-8 lg:px-16">
       <h2 className="text-2xl sm:text-3xl font-bold font-lora mb-6">
         Anvi - Promise you the best quality meat
       </h2>
 
-      <div className="flex justify-center items-center gap-6 text-gray-700 text-nowrap flex-wrap">
+      <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-6 text-gray-700 sm:text-nowrap">
         <MotoPoint text="Fresh & Juicy cuts" />
         <MotoPoint text="We maintain hygiene" />
         <MotoPoint text="Delivery to your doorstep" />

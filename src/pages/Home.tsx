@@ -7,11 +7,12 @@ import { bestSellerData } from "../utils/mockData";
 
 const Home: React.FC = () => {
   return (
-    <div className="flex flex-col min-h-screen py-8 space-y-8">
+    <div className="flex flex-col py-8 space-y-8">
+      {/* Banner Section */}
       <BannerSection />
-      <ProductMoto />
       <Categories />
       <HomeProductsList title="Bestsellers" subtitle="Shop Our Top Products" items={bestSellerData} />
+      <ProductMoto />
     </div>
   );
 };

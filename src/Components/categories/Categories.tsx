@@ -5,10 +5,10 @@ import SectionTitle from "../../Components/SectionTitle";
 
 const Categories: React.FC = () => {
   return (
-    <section className="space-y-6">
+    <section id="categories-section" className="space-y-6 ">
       <SectionTitle title="Explore Categories" subtitle="Freshest meats and much more!" />
       {/* Categories Grid */}
-      <div className="grid grid-cols-3 md:grid-cols-5 gap-y-8 gap-x-2 md:gap-x-8">
+      <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-5 gap-y-8 gap-x-2 md:gap-x-8">
         {categories.map((cat) => (
           <div key={cat.value} className="flex flex-col items-start">
             <img
