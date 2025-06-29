@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import AddToCartBtn from "../AddToCartBtn";
 import SectionTitle from "../SectionTitle";
 
@@ -10,6 +11,7 @@ interface ProductItem {
   originalPrice: number;
   discount: number;
   buttonLabel?: string;
+  id?: string;
 }
 
 interface HomeProductsListProps {
@@ -23,6 +25,14 @@ const HomeProductsList: React.FC<HomeProductsListProps> = ({
   subtitle,
   items,
 }) => {
+  const navigate = useNavigate();
+
+  const handleProductClick = (item: ProductItem) => {
+    if (item.id) {
+      navigate(`/product/${item.id}`);
+    }
+  };
+
   return (
     <section className="space-y-6">
       <SectionTitle title={title} subtitle={subtitle} />
@@ -30,7 +40,8 @@ const HomeProductsList: React.FC<HomeProductsListProps> = ({
         {items.map((item, idx) => (
           <div
             key={idx}
-            className="flex flex-col items-center relative"
+            className="flex flex-col items-center relative cursor-pointer hover:scale-105 transition-transform duration-200"
+            onClick={() => handleProductClick(item)}
           >
             <div className="relative w-full h-36 mb-4">
               <img
@@ -53,14 +64,16 @@ const HomeProductsList: React.FC<HomeProductsListProps> = ({
                   </span>
                 </div>
               </div>
-             <AddToCartBtn
-                id={item.name}
-                name={item.name}
-                image={item.image}
-                price={item.price}
-                description={item.description}
-                className="w-full"
-              />
+              <div onClick={(e) => e.stopPropagation()}>
+                <AddToCartBtn
+                  id={item.id || item.name}
+                  name={item.name}
+                  image={item.image}
+                  price={item.price}
+                  description={item.description}
+                  className="w-full"
+                />
+              </div>
             </div>
           </div>
         ))}

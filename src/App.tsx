@@ -12,6 +12,8 @@ import MyProfile from "./Components/MyAccount/MyProfile";
 import { LoginModal, UserData } from "./Components/Login";
 import { useUser } from "./store/user/userSlice";
 import ProtectedRoute from "./Components/ProtectedRoute";
+import CategoryProducts from './pages/CategoryProducts';
+import ProductDetail from './pages/ProductDetail';
 
 const Home = lazy(() => import("./pages/Home"));
 
@@ -79,7 +81,13 @@ const LoginPage: React.FC = () => {
 function AppContent() {
   const [isCategoriesModalOpen, setIsCategoriesModalOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { isAuthenticated } = useUser();
+
+  // Scroll to top on route change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   const handleSearchClick = () => {
     setIsCategoriesModalOpen(true);
@@ -144,6 +152,8 @@ function AppContent() {
             <Routes>
               <Route path={ROUTES.LOGIN} element={<LoginPage />} />
               <Route path={ROUTES.HOME} element={<Home />} />
+              <Route path="/category/:categoryValue" element={<CategoryProducts />} />
+              <Route path="/product/:productId" element={<ProductDetail />} />
               <Route 
                 path={ROUTES.ACCOUNT} 
                 element={
