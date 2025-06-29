@@ -28,7 +28,7 @@ const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="bg-[#20263e] text-white mt-auto">
+    <footer className="bg-gray-900 text-white mt-auto">
       {/* Desktop Layout */}
       <div className="hidden lg:block">
         <div className="max-w-7xl mx-auto px-6 py-12">

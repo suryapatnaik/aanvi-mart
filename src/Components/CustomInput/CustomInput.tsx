@@ -1,5 +1,5 @@
 import React from "react";
-import SearchIcon from '../../assets/icons/Searchicon.svg';
+import SearchIcon from '../../assets/icons/SearchIcon.svg';
 interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   placeholder?: string;
   height?: string;

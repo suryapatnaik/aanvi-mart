@@ -53,7 +53,14 @@ const HomeProductsList: React.FC<HomeProductsListProps> = ({
                   </span>
                 </div>
               </div>
-              <AddToCartBtn className="w-full" />
+             <AddToCartBtn
+                id={item.name}
+                name={item.name}
+                image={item.image}
+                price={item.price}
+                description={item.description}
+                className="w-full"
+              />
             </div>
           </div>
         ))}

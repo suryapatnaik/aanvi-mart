@@ -1,12 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { useUser } from "../../store/user/userSlice";
 import brandLogo from "../../assets/Brand/anvi-logo.png";
 import categoryIcon from "../../assets/icons/categoryIcon.svg";
 import CustomInput from "../CustomInput/CustomInput";
 import CartSection from "../CartSection/CartSection";
 import { fetchLocationDetails } from "../../utils/common/common.helpers";
-import { LoginModal, UserData } from "../Login";
+import CartModal from "../CartSection/CartModal";
+import MyAccountModal from "./MyAccountModal";
+import { ROUTES } from "../../routes/constants";
 
-// Add a location icon (using a Unicode emoji for now, replace with your SVG if needed)
+// Add a locationzzzzlace with your SVG if needed)
 const locationIcon = (
   <span role="img" aria-label="location" className="text-white text-lg">
     📍
@@ -29,53 +33,108 @@ const fetchAndSetLocation = async (
 
 interface HeaderProps {
   className?: string;
+  onCategoriesClick?: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ className = '' }) => {
+const Header: React.FC<HeaderProps> = ({ className = '', onCategoriesClick = () => {} }) => {
+  const { user: currentUser, isAuthenticated, login, logout, initialize } = useUser();
+  const initializedRef = useRef(false);
+  const navigate = useNavigate();
+  
   const [location, setLocation] = useState<string>("Fetching location...");
   const [plusCode, setPlusCode] = useState<string>("");
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState<UserData | null>(() => {
-    // Load user data from localStorage on component mount
-    const savedUser = localStorage.getItem('currentUser');
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
+  const [isCartModalOpen, setIsCartModalOpen] = useState(false);
+  const [isMyAccountModalOpen, setIsMyAccountModalOpen] = useState(false);
+  const [modalPosition, setModalPosition] = useState<{ x: number; y: number } | undefined>();
+
+  // Initialize user from localStorage on component mount
+  useEffect(() => {
+    if (!initializedRef.current) {
+      try {
+        initialize();
+        initializedRef.current = true;
+      } catch (error) {
+        console.error('Error initializing user:', error);
+      }
+    }
+  }, [initialize]);
 
   useEffect(() => {
-    fetchAndSetLocation(setLocation, setPlusCode);
+    try {
+      fetchAndSetLocation(setLocation, setPlusCode);
+    } catch (error) {
+      console.error('Error fetching location:', error);
+      setLocation("Location unavailable");
+    }
   }, []);
 
-  const handleLoginSuccess = (userData: UserData) => {
-    console.log('Login successful:', userData);
-    setCurrentUser(userData);
-    // Store user data in localStorage
-    localStorage.setItem('currentUser', JSON.stringify(userData));
-  };
-
-  const handleSignupSuccess = (userData: UserData) => {
-    console.log('Signup successful:', userData);
-    setCurrentUser(userData);
-    // Store user data in localStorage
-    localStorage.setItem('currentUser', JSON.stringify(userData));
-  };
-
   const handleLogout = () => {
-    setCurrentUser(null);
-    // Remove user data from localStorage
-    localStorage.removeItem('currentUser');
+    try {
+      logout();
+      setIsMyAccountModalOpen(false);
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  };
+
+  const handleNavigateToProfile = () => {
+    navigate(ROUTES.ACCOUNT);
+  };
+
+  const handleNavigateToOrders = () => {
+    navigate(ROUTES.ORDERS);
+  };
+
+  const handleMyAccountClick = (event?: React.MouseEvent<HTMLButtonElement>) => {
+    try {
+      // If user is not authenticated, redirect to login
+      if (!isAuthenticated) {
+        navigate(ROUTES.LOGIN);
+        return;
+      }
+
+      if (event) {
+        const button = event.currentTarget;
+        const rect = button.getBoundingClientRect();
+        setModalPosition({
+          x: rect.left + rect.width / 2,
+          y: rect.bottom + 10, // 10px gap below the button
+        });
+      } else {
+        // For bottom navigation, position in center
+        setModalPosition({
+          x: window.innerWidth / 2,
+          y: window.innerHeight / 2,
+        });
+      }
+      setIsMyAccountModalOpen(true);
+    } catch (error) {
+      console.error('Error handling my account click:', error);
+    }
+  };
+
+  const handleSearchClick = () => {
+    // Focus on search input or open search modal
+    console.log('Search clicked');
+  };
+
+  const handleHomeClick = () => {
+    // Scroll to top of page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
     <>
-      <div className={`bg-[#920000] ${className}`}>
+      <div className={`bg-[#920000] fixed top-0 left-0 right-0 z-50 ${className}`}>
         {/* Desktop Layout */}
         <div className="hidden lg:flex items-center justify-between p-4">
           {/* Logo and Location Section */}
           <div className="flex items-center gap-4">
             <img
               src={brandLogo}
-              className="w-[70px] object-contain"
+              className="w-[70px] object-contain cursor-pointer hover:opacity-80 transition-opacity"
               alt="Brand Logo"
+              onClick={() => navigate(ROUTES.HOME)}
             />
 
             <div className="flex flex-col text-white">
@@ -100,35 +159,40 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
 
           {/* Right Section */}
           <div className="flex items-center gap-6">
-            <div className="flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity">
+            <div 
+              className="flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={onCategoriesClick}
+            >
               <img src={categoryIcon} className="h-6 w-6" alt="Categories" />
               <h2 className="text-white font-semibold font-sans">
                 Categories
               </h2>
             </div>
 
-            {currentUser ? (
-              <div className="flex items-center gap-3">
-                <div className="text-white text-sm">
-                  <span className="font-medium">Hi, {currentUser.username}!</span>
-                </div>
+            {isAuthenticated ? (
+              <div className="flex items-center gap-4">
+                
+                {/* My Account Button */}
                 <button 
-                  onClick={handleLogout}
-                  className="text-white font-medium cursor-pointer hover:text-gray-200 transition-colors px-3 py-1 rounded hover:bg-white hover:bg-opacity-10"
+                  onClick={handleMyAccountClick}
+                  className="text-white font-medium cursor-pointer hover:text-red-900 transition-colors px-3 py-1 rounded hover:bg-white hover:bg-opacity-10 flex items-center gap-2"
                 >
-                  Logout
+                  <span>My Account</span>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
                 </button>
               </div>
             ) : (
-              <button 
-                onClick={() => setIsLoginModalOpen(true)}
-                className="text-white font-medium cursor-pointer hover:text-gray-200 transition-colors px-3 py-1 rounded hover:bg-white hover:bg-opacity-10"
+              <button
+                onClick={() => navigate(ROUTES.LOGIN)}
+                className="text-white font-medium cursor-pointer hover:text-red-900 transition-colors px-4 py-2 rounded border border-white hover:bg-white hover:bg-opacity-10"
               >
                 Login
               </button>
             )}
 
-            <CartSection />
+            <CartSection onClick={() => setIsCartModalOpen(true)} />
           </div>
         </div>
 
@@ -138,8 +202,9 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
           <div className="flex items-center gap-3">
             <img
               src={brandLogo}
-              className="w-[60px] object-contain"
+              className="w-[60px] object-contain cursor-pointer hover:opacity-80 transition-opacity"
               alt="Brand Logo"
+              onClick={() => navigate(ROUTES.HOME)}
             />
 
             <div className="flex flex-col text-white">
@@ -162,35 +227,9 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             />
           </div>
 
-          {/* Right Section */}
+          {/* Right Section - Only Cart for tablet */}
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity">
-              <img src={categoryIcon} className="h-5 w-5" alt="Categories" />
-              <h2 className="text-white font-semibold font-sans text-sm">
-                Categories
-              </h2>
-            </div>
-
-            {currentUser ? (
-              <div className="flex items-center gap-2">
-                <span className="text-white text-sm font-medium">Hi, {currentUser.username}!</span>
-                <button 
-                  onClick={handleLogout}
-                  className="text-white font-medium cursor-pointer hover:text-gray-200 transition-colors px-2 py-1 rounded hover:bg-white hover:bg-opacity-10 text-sm"
-                >
-                  Logout
-                </button>
-              </div>
-            ) : (
-              <button 
-                onClick={() => setIsLoginModalOpen(true)}
-                className="text-white font-medium cursor-pointer hover:text-gray-200 transition-colors px-2 py-1 rounded hover:bg-white hover:bg-opacity-10 text-sm"
-              >
-                Login
-              </button>
-            )}
-
-            <CartSection />
+            <CartSection onClick={() => setIsCartModalOpen(true)} />
           </div>
         </div>
 
@@ -201,8 +240,9 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             <div className="flex items-center gap-2">
               <img
                 src={brandLogo}
-                className="w-[50px] object-contain"
+                className="w-[50px] object-contain cursor-pointer hover:opacity-80 transition-opacity"
                 alt="Brand Logo"
+                onClick={() => navigate(ROUTES.HOME)}
               />
 
               <div className="flex flex-col text-white">
@@ -217,56 +257,36 @@ const Header: React.FC<HeaderProps> = ({ className = '' }) => {
             </div>
 
             <div className="flex items-center gap-3">
-              {currentUser ? (
-                <div className="flex items-center gap-2">
-                  <span className="text-white text-sm font-medium">Hi, {currentUser.username}!</span>
-                  <button 
-                    onClick={handleLogout}
-                    className="text-white font-medium cursor-pointer  transition-colors px-2 py-1 rounded hover:bg-white hover:text-[#920000] hover:bg-opacity-10 text-sm"
-                  >
-                    Logout
-                  </button>
-                </div>
-              ) : (
-                <button 
-                  onClick={() => setIsLoginModalOpen(true)}
-                  className="text-white font-medium cursor-pointer  transition-colors px-2 py-1 rounded hover:bg-white hover:text-[#920000] hover:bg-opacity-10 text-sm"
-                >
-                  Login
-                </button>
-              )}
+              <CartSection onClick={() => setIsCartModalOpen(true)} />
             </div>
           </div>
 
-          {/* Bottom Row - Search, Categories, and Cart */}
+          {/* Bottom Row - Search Only */}
           <div className="flex items-center gap-3">
             <div className="flex-1">
               <CustomInput
-                placeholder="Search"
+                placeholder="Search for Chicken, Mutton and More.."
                 height="40px"
                 width="100%"
               />
             </div>
-
-            <div className="flex items-center gap-1 cursor-pointer hover:opacity-80 transition-opacity">
-              <img src={categoryIcon} className="h-5 w-5" alt="Categories" />
-              <span className="text-white font-semibold font-sans text-sm">
-                Categories
-              </span>
-            </div>
-
-            <CartSection />
           </div>
         </div>
       </div>
 
-      {/* Login Modal */}
-      <LoginModal
-        isOpen={isLoginModalOpen}
-        onClose={() => setIsLoginModalOpen(false)}
-        onLoginSuccess={handleLoginSuccess}
-        onSignupSuccess={handleSignupSuccess}
+      {/* My Account Modal */}
+      <MyAccountModal
+        isOpen={isMyAccountModalOpen}
+        onClose={() => setIsMyAccountModalOpen(false)}
+        onLogout={handleLogout}
+        onNavigateToProfile={handleNavigateToProfile}
+        onNavigateToOrders={handleNavigateToOrders}
+        position={modalPosition}
       />
+
+      {isCartModalOpen && (
+        <CartModal isOpen={isCartModalOpen} onClose={() => setIsCartModalOpen(false)} />
+      )}
     </>
   );
 };
