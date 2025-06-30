@@ -1,20 +1,28 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import CartIcon from "../../assets/icons/CartIcon.svg";
 import arrowRightIcon from "../../assets/icons/ArrowRight.svg";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../store";
 
-const CartSection: React.FC = () => {
-  const [itemCount, setItemCount] = useState(0);
-  const [amount, setAmount] = useState(0);
+const CartSection: React.FC<{ onClick?: () => void }> = ({ onClick }) => {
+  let items: any[] = [];
+  let itemCount = 0;
+  let amount = 0;
 
-  // Simulate cart data for demo purposes
-  useEffect(() => {
-    // In real app, this would come from your cart state management
-    setItemCount(8);
-    setAmount(450);
-  }, []);
+  try {
+    items = useSelector((state: RootState) => state.cart.items);
+    itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+    amount = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  } catch (error) {
+    console.error('Error accessing cart state:', error);
+    // Provide fallback values
+    items = [];
+    itemCount = 0;
+    amount = 0;
+  }
 
   return (
-    <div className="flex items-center justify-between border border-white text-white rounded-lg p-2 min-w-[120px] bg-[#920000] bg-opacity-10 hover:bg-opacity-20 transition-all duration-200 cursor-pointer">
+    <div onClick={onClick} className="flex items-center justify-between border border-white text-white rounded-lg p-2 min-w-[120px] bg-[#920000] bg-opacity-10 hover:bg-opacity-20 transition-all duration-200 cursor-pointer">
       <div className="flex flex-col items-start justify-centers">
         <span className="text-xs font-medium">Items: {itemCount}</span>
         <span className="text-xs font-medium">₹{amount}</span>
