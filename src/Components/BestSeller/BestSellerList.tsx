@@ -1,7 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import AddToCartBtn from "../AddToCartBtn";
+import WishlistButton from "../WishlistButton";
 import SectionTitle from "../SectionTitle";
+import { getProductById } from "../../utils/mockData";
 
 interface BestSellerItem {
   image: string;
@@ -37,22 +39,34 @@ const BestSellerList: React.FC<BestSellerListProps> = ({
     <section className="py-8">
       <SectionTitle title={title} subtitle={subtitle} />
       <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-        {items.map((item, idx) => (
-          <div
-            key={idx}
-            className="bg-white rounded-2xl shadow-lg p-6 pt-4 flex flex-col items-center relative cursor-pointer hover:scale-105 transition-transform duration-200"
-            onClick={() => handleProductClick(item)}
-          >
-            <div className="relative w-full h-36 mb-4">
-              <img
-                src={item.image}
-                alt={item.name}
-                className="w-full h-36 object-cover rounded-xl"
-              />
-              <span className="absolute top-2 right-2 bg-red-700 text-white font-bold text-sm rounded-md px-3 py-1">
-                {item.discount} % OFF
-              </span>
-            </div>
+        {items.map((item, idx) => {
+          // Get the full product data for wishlist functionality
+          const product = item.id ? getProductById(item.id) : null;
+          
+          return (
+            <div
+              key={idx}
+              className="bg-white rounded-2xl shadow-lg p-6 pt-4 flex flex-col items-center relative cursor-pointer hover:scale-105 transition-transform duration-200"
+              onClick={() => handleProductClick(item)}
+            >
+              <div className="relative w-full h-36 mb-4">
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="w-full h-36 object-cover rounded-xl"
+                />
+                <span className="absolute top-2 left-2 bg-red-700 text-white font-bold text-sm rounded-md px-3 py-1">
+                  {item.discount} % OFF
+                </span>
+                {/* Wishlist Button */}
+                {product && (
+                  <WishlistButton 
+                    product={product} 
+                    size="md"
+                    className="top-2 right-2"
+                  />
+                )}
+              </div>
             <div className="w-full flex flex-col gap-2 h-full justify-between">
               <div>
                 <h3 className="text-lg font-semibold m-0">{item.name}</h3>
@@ -76,7 +90,8 @@ const BestSellerList: React.FC<BestSellerListProps> = ({
               </div>
             </div>
           </div>
-        ))}
+        );
+        })}
       </div>
     </section>
   );

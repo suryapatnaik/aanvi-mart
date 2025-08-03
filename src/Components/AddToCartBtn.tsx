@@ -65,7 +65,7 @@ const AddToCartBtn: React.FC<AddToCartBtnProps> = ({
   }
 
   return (
-    <div className={`flex items-center justify-between border border-red-700 rounded-lg bg-white text-red-700 font-semibold text-lg px-2 py-2 ${className}`}>
+    <div className={`flex items-center justify-between border border-red-700 rounded-lg bg-white text-red-700 font-semibold text-lg px-2 py-2 w-fit ${className}`}>
       <button
         className="px-3 text-xl font-bold focus:outline-none cursor-pointer"
         onClick={handleDecrement}

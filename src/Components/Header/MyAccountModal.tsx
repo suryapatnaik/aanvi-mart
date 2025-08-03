@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { useUser } from '../../store/user/userSlice';
 import userIcon from '../../assets/icons/userIcon.svg';
+import wishlistIcon from '../../assets/icons/wishlistIcon.svg';
 
 interface MyAccountModalProps {
   isOpen: boolean;
@@ -8,6 +9,7 @@ interface MyAccountModalProps {
   onLogout: () => void;
   onNavigateToProfile?: () => void;
   onNavigateToOrders?: () => void;
+  onNavigateToWishlist?: () => void;
   position?: { x: number; y: number };
 }
 
@@ -17,6 +19,7 @@ const MyAccountModal: React.FC<MyAccountModalProps> = ({
   onLogout,
   onNavigateToProfile,
   onNavigateToOrders,
+  onNavigateToWishlist,
   position,
 }) => {
   let currentUser = null;
@@ -59,6 +62,11 @@ const MyAccountModal: React.FC<MyAccountModalProps> = ({
 
   const handleOrdersClick = () => {
     onNavigateToOrders?.();
+    onClose();
+  };
+
+  const handleWishlistClick = () => {
+    onNavigateToWishlist?.();
     onClose();
   };
 
@@ -115,6 +123,15 @@ const MyAccountModal: React.FC<MyAccountModalProps> = ({
           >
             <div>
               <h3 className="font-semibold text-gray-900">My Orders</h3>
+            </div>
+          </button>
+
+          <button
+            onClick={handleWishlistClick}
+            className="w-full flex items-center p-4 text-left hover:bg-gray-200 transition-colors group"
+          >
+            <div>
+              <h3 className="font-semibold text-gray-900">My Wishlist</h3>
             </div>
           </button>
 

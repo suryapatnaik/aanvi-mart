@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Product } from '../../utils/mockData';
 import AddToCartBtn from '../AddToCartBtn';
+import WishlistButton from '../WishlistButton';
 
 interface SearchResultsProps {
   products: Product[];
@@ -88,9 +89,15 @@ const SearchResults: React.FC<SearchResultsProps> = ({ products, searchQuery, on
                     {product.discount}%
                   </div>
                 )}
+                {/* Wishlist Button */}
+                {/* <WishlistButton 
+                  product={product} 
+                  size="sm"
+                  className="top-0 right-0"
+                /> */}
                 {!product.inStock && (
-                  <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">
-                    <span className="text-white text-xs font-bold">Out of Stock</span>
+                  <div className="absolute inset-0  bg-opacity-80 rounded-lg flex  items-center justify-center">
+                    <span className="text-red-600 text-[10px] font-bold p-2">Out of Stock!!</span>
                   </div>
                 )}
               </div>
@@ -114,7 +121,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ products, searchQuery, on
 
               {/* Add to Cart Button */}
               <div className="flex-shrink-0" onClick={(e) => e.stopPropagation()}>
-                {product.inStock && (
+                {product.inStock ? (
                   <AddToCartBtn
                     id={product.id}
                     name={product.name}
@@ -123,6 +130,13 @@ const SearchResults: React.FC<SearchResultsProps> = ({ products, searchQuery, on
                     description={product.description}
                     className="px-3 py-1 text-xs"
                   />
+                ) : (
+                  <button
+                    disabled
+                    className="px-3 py-1 text-xs bg-gray-300 text-gray-500 cursor-not-allowed rounded-md font-medium"
+                  >
+                    Out of Stock
+                  </button>
                 )}
               </div>
             </div>
