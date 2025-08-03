@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getProductsByCategory, Product } from '../utils/mockData';
 import { getCategoryByValue } from '../utils/categories/categories.helpers';
 import AddToCartBtn from '../Components/AddToCartBtn';
+import WishlistButton from '../Components/WishlistButton';
 
 const CategoryProducts: React.FC = () => {
   const { categoryValue } = useParams<{ categoryValue: string }>();
@@ -148,6 +149,12 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
             {product.discount}% OFF
           </div>
         )}
+        {/* Wishlist Button */}
+        <WishlistButton 
+          product={product} 
+          size="md"
+          className="top-2 right-2"
+        />
         {!product.inStock && (
           <div className="absolute inset-0  bg-opacity-50 backdrop-blur-sm flex items-center justify-center">
             <span className="text-red-600 font-bold">Out of Stock!!</span>

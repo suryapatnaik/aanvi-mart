@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useCallback } from "react";
 import { RootState } from "../index";
 import { clearCart } from "../cartSlice";
+import { clearWishlist } from "../wishlistSlice";
 
 // Define UserData type to match Login component
 interface UserData {
@@ -187,6 +188,7 @@ export const useUser = () => {
     try {
       dispatch(logoutUser());
       dispatch(clearCart());
+      dispatch(clearWishlist());
     } catch (err) {
       console.error('Error during logout dispatch:', err);
     }

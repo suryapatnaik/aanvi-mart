@@ -14,6 +14,7 @@ import { useUser } from "./store/user/userSlice";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import CategoryProducts from './pages/CategoryProducts';
 import ProductDetail from './pages/ProductDetail';
+import Wishlist from './pages/Wishlist';
 
 const Home = lazy(() => import("./pages/Home"));
 
@@ -82,7 +83,12 @@ function AppContent() {
   const [isCategoriesModalOpen, setIsCategoriesModalOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAuthenticated } = useUser();
+  const { isAuthenticated, initialize } = useUser();
+
+  // Initialize user state from localStorage on app load
+  useEffect(() => {
+    initialize();
+  }, [initialize]);
 
   // Scroll to top on route change
   useEffect(() => {
@@ -159,6 +165,14 @@ function AppContent() {
                 element={
                   <ProtectedRoute>
                     <MyProfile />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/wishlist" 
+                element={
+                  <ProtectedRoute>
+                    <Wishlist />
                   </ProtectedRoute>
                 } 
               />

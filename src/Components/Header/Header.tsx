@@ -89,6 +89,10 @@ const Header: React.FC<HeaderProps> = ({ className = '', onCategoriesClick = () 
     navigate(ROUTES.ORDERS);
   };
 
+  const handleNavigateToWishlist = () => {
+    navigate(ROUTES.WISHLIST);
+  };
+
   const handleMyAccountClick = (event?: React.MouseEvent<HTMLButtonElement>) => {
     try {
       // If user is not authenticated, redirect to login
@@ -336,6 +340,7 @@ const Header: React.FC<HeaderProps> = ({ className = '', onCategoriesClick = () 
         onLogout={handleLogout}
         onNavigateToProfile={handleNavigateToProfile}
         onNavigateToOrders={handleNavigateToOrders}
+        onNavigateToWishlist={handleNavigateToWishlist}
         position={modalPosition}
       />
 
