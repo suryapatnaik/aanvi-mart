@@ -4,20 +4,16 @@ import { useUser } from "../../store/user/userSlice";
 import brandLogo from "../../assets/Brand/anvi-logo.png";
 import categoryIcon from "../../assets/icons/categoryIcon.svg";
 import CustomInput from "../CustomInput/CustomInput";
-import CartSection from "../CartSection/CartSection";
+// CartSection removed - no longer used in mobile/tablet layouts
 import { fetchLocationDetails } from "../../utils/common/common.helpers";
 import CartModal from "../CartSection/CartModal";
+import CartSection from "../CartSection/CartSection";
 import MyAccountModal from "./MyAccountModal";
 import { ROUTES } from "../../routes/constants";
 import { searchProducts } from "../../utils/mockData";
 import SearchResults from "../SearchResults";
-
+import LocationIcon from "../../assets/icons/LocationIcon.svg";
 // Add a locationzzzzlace with your SVG if needed)
-const locationIcon = (
-  <span role="img" aria-label="location" className="text-white text-lg">
-    📍
-  </span>
-);
 
 const fetchAndSetLocation = async (
   setLocation: React.Dispatch<React.SetStateAction<string>>,
@@ -121,16 +117,6 @@ const Header: React.FC<HeaderProps> = ({ className = '', onCategoriesClick = () 
     }
   };
 
-  const handleSearchClick = () => {
-    // Focus on search input or open search modal
-    console.log('Search clicked');
-  };
-
-  const handleHomeClick = () => {
-    // Scroll to top of page
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   const searchResults = useMemo(() => {
     if (!searchQuery.trim()) return [];
     return searchProducts(searchQuery);
@@ -155,15 +141,15 @@ const Header: React.FC<HeaderProps> = ({ className = '', onCategoriesClick = () 
           <div className="flex items-center gap-4">
             <img
               src={brandLogo}
-              className="w-[70px] object-contain cursor-pointer hover:opacity-80 transition-opacity"
+              className="w-[85px] object-contain cursor-pointer hover:opacity-80 transition-opacity"
               alt="Brand Logo"
               onClick={() => navigate(ROUTES.HOME)}
             />
 
-            <div className="flex flex-col text-white">
+            <div className="flex text-white gap-2">
               <div className="flex items-center gap-1">
-                {locationIcon}
-                <span className="font-semibold text-sm">{plusCode || "--"}</span>
+                  <img src={LocationIcon} alt="location" className="w-4 h-4" />
+                  {/* <span className="font-semibold text-sm">{plusCode || "--"}</span> */}
               </div>
               <span className="text-xs truncate max-w-[200px]">
                 {location}
@@ -237,15 +223,14 @@ const Header: React.FC<HeaderProps> = ({ className = '', onCategoriesClick = () 
           <div className="flex items-center gap-3">
             <img
               src={brandLogo}
-              className="w-[60px] object-contain cursor-pointer hover:opacity-80 transition-opacity"
+              className="w-[75px] object-contain cursor-pointer hover:opacity-80 transition-opacity"
               alt="Brand Logo"
               onClick={() => navigate(ROUTES.HOME)}
             />
 
-            <div className="flex flex-col text-white">
+            <div className="flex text-white gap-2">
               <div className="flex items-center gap-1">
-                {locationIcon}
-                <span className="font-semibold text-sm">{plusCode || "--"}</span>
+                <img src={LocationIcon} alt="location" className="w-4 h-4" />
               </div>
               <span className="text-xs truncate max-w-[150px]">
                 {location}
@@ -274,7 +259,7 @@ const Header: React.FC<HeaderProps> = ({ className = '', onCategoriesClick = () 
             />
           </div>
 
-          {/* Right Section - Only Cart for tablet */}
+          {/* Right Section - Cart for tablet */}
           <div className="flex items-center gap-4">
             <CartSection onClick={() => setIsCartModalOpen(true)} />
           </div>
@@ -284,27 +269,27 @@ const Header: React.FC<HeaderProps> = ({ className = '', onCategoriesClick = () 
         <div className="md:hidden p-3">
           {/* Top Row - Logo, Location, and Actions */}
           <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-between w-full gap-2">
               <img
                 src={brandLogo}
-                className="w-[50px] object-contain cursor-pointer hover:opacity-80 transition-opacity"
+                className="w-[65px] object-contain cursor-pointer hover:opacity-80 transition-opacity"
                 alt="Brand Logo"
                 onClick={() => navigate(ROUTES.HOME)}
               />
 
-              <div className="flex flex-col text-white">
+              <div className="flex items-center text-white gap-2">
                 <div className="flex items-center gap-1">
-                  {locationIcon}
-                  <span className="font-semibold text-sm">{plusCode || "--"}</span>
+                  <img src={LocationIcon} alt="location" className="w-4 h-4" />
+                  
                 </div>
-                <span className="text-xs truncate max-w-[120px]">
+                <span className="text-xs max-w-[120px]">
                   {location}
                 </span>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
-              <CartSection onClick={() => setIsCartModalOpen(true)} />
+              {/* Cart removed for mobile - now shown as view cart button above bottom navigation */}
             </div>
           </div>
 

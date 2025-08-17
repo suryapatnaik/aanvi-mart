@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../../store";
 import { updateQuantity, removeFromCart, addToCart } from "../../store/cartSlice";
 import { bestSellerData } from "../../utils/mockData";
+import { generateDeliverySlots } from "../../utils/common/common.helpers";
 import cartIcon from '../../assets/icons/cartRedIcon.svg'
 interface CartModalProps {
   isOpen: boolean;
@@ -11,6 +12,11 @@ interface CartModalProps {
 
 const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
+  
+  // Add state for delivery slots
+  const [deliverySlots, setDeliverySlots] = useState<Array<{ date: string; label: string; slots: string[] }>>([]);
+  const [selectedDate, setSelectedDate] = useState<string>('');
+  const [selectedSlot, setSelectedSlot] = useState<string>('');
   
   let items: any[] = [];
   let total = 0;
@@ -30,6 +36,15 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
     cartIds = [];
     suggestions = [];
   }
+
+  // Generate delivery slots when component mounts
+  useEffect(() => {
+    const slots = generateDeliverySlots();
+    setDeliverySlots(slots);
+    if (slots.length > 0) {
+      setSelectedDate(slots[0].date);
+    }
+  }, []);
 
   if (!isOpen) return null;
 
@@ -144,27 +159,57 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
         {/* Delivery Slot */}
         <div className="p-4 border-b border-gray-100">
           <div className="font-semibold mb-2 text-sm">Select a delivery slot</div>
-          <div className="flex gap-2 mb-2">
-            <button className="bg-[#920000] text-white rounded px-3 py-1 text-xs">Tomorrow</button>
+          <div className="text-xs text-gray-600 mb-3">
+            Slots are available from 8 AM to 8 PM with a 2-hour advance booking requirement
           </div>
-          <div className="grid grid-cols-2 gap-2">
-            {[
-              "11:00 AM - 12:00 PM",
-              "12:00 PM - 01:00 PM",
-              "01:00 PM - 02:00 PM",
-              "02:00 PM - 03:00 PM",
-              "03:00 PM - 04:00 PM",
-              "04:00 PM - 05:00 PM",
-              "05:00 PM - 06:00 PM",
-            ].map((slot) => (
+          
+          {/* Date Selection */}
+          <div className="flex gap-2 mb-3 overflow-x-auto pb-2">
+            {deliverySlots.map((dateSlot) => (
               <button
-                key={slot}
-                className="border border-gray-200 rounded px-2 py-1 text-xs hover:bg-[#920000] hover:text-white transition-colors"
+                key={dateSlot.date}
+                onClick={() => setSelectedDate(dateSlot.date)}
+                className={`whitespace-nowrap rounded px-3 py-1 text-xs transition-colors ${
+                  selectedDate === dateSlot.date
+                    ? 'bg-[#920000] text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
               >
-                {slot}
+                {dateSlot.label}
               </button>
             ))}
           </div>
+          
+          {/* Time Slots */}
+          {selectedDate && (
+            <div className="grid grid-cols-2 gap-2">
+              {deliverySlots
+                .find(dateSlot => dateSlot.date === selectedDate)
+                ?.slots.map((slot) => (
+                  <button
+                    key={slot}
+                    onClick={() => setSelectedSlot(slot)}
+                    className={`border rounded px-2 py-1 text-xs transition-colors ${
+                      selectedSlot === slot
+                        ? 'border-[#920000] bg-[#920000] text-white'
+                        : 'border-gray-200 hover:bg-[#920000] hover:text-white hover:border-[#920000]'
+                    }`}
+                  >
+                    {slot}
+                  </button>
+                ))}
+            </div>
+          )}
+          
+          {/* Selected Slot Display */}
+          {selectedSlot && (
+            <div className="mt-3 p-2 bg-green-50 border border-green-200 rounded text-sm">
+              <span className="text-green-800 font-medium">Selected: </span>
+              <span className="text-green-700">
+                {deliverySlots.find(dateSlot => dateSlot.date === selectedDate)?.label} - {selectedSlot}
+              </span>
+            </div>
+          )}
         </div>
         {/* Coupons */}
         <div className="p-4 border-b border-gray-100">
@@ -187,7 +232,12 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose }) => {
               <div className="text-xs text-gray-500">TOTAL</div>
             </div>
           </div>
-          <button className="w-full bg-[#920000] text-white rounded py-3 font-semibold mt-2" disabled={items.length === 0}>Place Order &rarr;</button>
+          <button 
+            className="w-full bg-[#920000] text-white rounded py-3 font-semibold mt-2 disabled:bg-gray-400 disabled:cursor-not-allowed" 
+            disabled={items.length === 0 || !selectedSlot}
+          >
+            Place Order &rarr;
+          </button>
         </div>
       </div>
       <style>{`
