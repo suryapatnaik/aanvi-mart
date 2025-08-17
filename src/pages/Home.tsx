@@ -24,7 +24,7 @@ const Home: React.FC = () => {
     <div className="flex flex-col py-8 space-y-8">
       {/* Banner Section */}
       <BannerSection />
-      <ProductMoto />
+      {/* <ProductMoto /> */}
       <Categories />
       <HomeProductsList title="Bestsellers" subtitle="Shop Our Top Products" items={bestSellerData} />
       <Testimonials testimonials={testimonialsData} />

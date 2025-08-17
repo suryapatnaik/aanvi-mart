@@ -4,7 +4,9 @@ import { lazy, Suspense, useState, useEffect } from "react";
 import Header from "./Components/Header/Header";
 import Footer from "./Components/Footer";
 import BottomNavigation from "./Components/BottomNavigation/BottomNavigation";
+import ViewCartButton from "./Components/ViewCartButton";
 import CategoriesModal from "./Components/categories/CategoriesModal";
+import CartModal from "./Components/CartSection/CartModal";
 import Categories from "./Components/categories/Categories";
 import { ROUTES } from "./routes/constants";
 import ErrorBoundary from "./Components/ErrorBoundary";
@@ -81,6 +83,7 @@ const LoginPage: React.FC = () => {
 
 function AppContent() {
   const [isCategoriesModalOpen, setIsCategoriesModalOpen] = useState(false);
+  const [isCartModalOpen, setIsCartModalOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { isAuthenticated, initialize } = useUser();
@@ -97,6 +100,10 @@ function AppContent() {
 
   const handleSearchClick = () => {
     setIsCategoriesModalOpen(true);
+  };
+
+  const handleCartClick = () => {
+    setIsCartModalOpen(true);
   };
   const handleCategoriesClick = () => {
     // Navigate to home page first
@@ -152,7 +159,7 @@ function AppContent() {
       <ErrorBoundary>
         <Header className="w-full" onCategoriesClick={handleCategoriesClick} />
       </ErrorBoundary>
-      <main className="flex-1 flex flex-col items-center lg:pb-0 pb-20 lg:pt-24 md:pt-20 pt-16 max-sm:mt-10" >
+      <main className="flex-1 flex flex-col items-center lg:pb-0 pb-20 lg:pt-24 md:pt-20 pt-16 max-sm:mt-15" >
         <div className="md:max-w-[80%] max-w-[90%] w-full">
           <Suspense fallback={<div>Loading...</div>}>
             <Routes>
@@ -184,6 +191,9 @@ function AppContent() {
       </main>
       <Footer />
       
+      {/* View Cart Button for Mobile/Tablet */}
+      <ViewCartButton onClick={handleCartClick} />
+      
       {/* Bottom Navigation for Mobile/Tablet */}
       <BottomNavigation
         onSearchClick={handleSearchClick}
@@ -200,6 +210,12 @@ function AppContent() {
       >
         <Categories />
       </CategoriesModal>
+
+      {/* Cart Modal */}
+      <CartModal
+        isOpen={isCartModalOpen}
+        onClose={() => setIsCartModalOpen(false)}
+      />
     </div>
   );
 }
